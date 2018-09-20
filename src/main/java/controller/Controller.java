@@ -5,10 +5,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Window;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
 public class Controller {
+    final static Logger log = Logger.getLogger(Controller.class);
+
     @FXML
     private TextField commandField;
 
@@ -32,6 +35,7 @@ public class Controller {
 
             if (command.equals("pwd") || command.equals("chdir")) {
                 outputField.setText(System.getProperty("user.dir"));
+                log.info("a pwd/chdir command has been executed.");
             } else if (command.equals("ls") || command.equals("dir")) {
                 String outputContent = "";
                 File directory = new File(System.getProperty("user.dir"));
@@ -47,6 +51,7 @@ public class Controller {
                     outputContent += fileContent;
                 }
                 outputField.setText(outputContent);
+                log.info("a ls/dir command has been executed.");
             }
         }
     }
