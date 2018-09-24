@@ -1,5 +1,6 @@
 package controller;
 
+import core.ParallelLooper;
 import helper.AlertHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +11,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Window;
 import org.apache.log4j.Logger;
 import utils.BashCommandUtil;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 
 public class Lab2TabController {
@@ -30,6 +36,10 @@ public class Lab2TabController {
     @FXML
     private Button executeButton;
 
+
+    /*
+    * Handle windows shell or Linux bash command
+    * */
     @FXML
     protected void handleRunButtonAction(ActionEvent event) {
         Window owner = runButton.getScene().getWindow();
@@ -45,8 +55,33 @@ public class Lab2TabController {
         }
     }
 
+    /*
+    * Handle looping in parallel using Thread
+    * */
     @FXML
     private void handleExecuteButtonAction(ActionEvent event) {
+        Window owner = executeButton.getScene().getWindow();
 
+        if (loopCounterField.getText().isEmpty() || Integer.parseInt(loopCounterField.getText()) < 0) {
+            AlertHelper.showAlert(Alert.AlertType.ERROR, owner, "Invalid input!",
+                    "Please enter a valid number");
+            outputField.setText("");
+            return;
+        } else {
+            Integer numberOfLoop = Integer.parseInt(loopCounterField.getText());
+
+            //Creating a pool of thread (of any number of threads...)
+            ExecutorService threadPool = Executors.newFixedThreadPool(numberOfLoop);
+            //Creating instance of Looper
+            ParallelLooper worker =  new ParallelLooper(numberOfLoop, this.outputField);
+            try {
+
+                threadPool.execute(worker);
+            } catch (Exception e) {
+                threadPool.shutdown();
+                log.info("Error occurred while looping: " + e.getMessage());
+                outputField.setText("");
+            }
+        }
     }
 }
