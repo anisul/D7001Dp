@@ -5,17 +5,21 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    private Parent rootNode;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("D7001D LAB 2");
-        primaryStage.setScene(new Scene(root, 900, 500));
-        primaryStage.show();
+    public static void main(final String[] args) {
+        Application.launch(args);
     }
 
+    @Override
+    public void init() throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
+        rootNode = fxmlLoader.load();
+    }
 
-    public static void main(String[] args) {
-        launch(args);
+    @Override
+    public void start(Stage stage) throws Exception{
+        stage.setScene(new Scene(rootNode));
+        stage.show();
     }
 }

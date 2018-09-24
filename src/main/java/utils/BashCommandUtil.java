@@ -8,82 +8,29 @@ import java.io.*;
 public class BashCommandUtil {
     private static Logger log = Logger.getLogger(BashCommandUtil.class);
 
-    public static String getIpConfig () {
-        if (PlatformUtil.isWindows()) {
-            return executeCommand("cmd.exe /c ipconfig");
-        } else if (PlatformUtil.isLinux()) {
-            return executeCommand("sh -c ifconfig");
-        } else {
-            return "";
-        }
-    }
-
-    public static String getMachineUptime() {
-        if (PlatformUtil.isLinux()) {
-            return executeCommand("sh -c uptime");
-        } else if (PlatformUtil.isWindows()) {
-            return executeCommand("cmd.exe /c net statistics workstation");
-        } else {
-            return "";
-        }
-    }
-
-    public static String getCurrentLoggedUser () {
-        if (PlatformUtil.isWindows()) {
-            return executeCommand("cmd.exe /c whoami");
-        } else if (PlatformUtil.isLinux()) {
-            return executeCommand("sh -c who");
-        } else {
-            return "";
-        }
-    }
-
-    public static String getCurrentDirectoryFiles() {
-        String currentDirectory = System.getProperty("user.dir");
-        if (PlatformUtil.isWindows()) {
-            return executeCommand("cmd.exe /c dir");
-        } else if (PlatformUtil.isLinux()) {
-            return executeCommand("sh -c ls");
-        } else {
-            return "";
-        }
-    }
-
-    public static String getPresentDirectory() {
-        if (PlatformUtil.isLinux()) {
-            return executeCommand("sh -c pwd");
-        } else if (PlatformUtil.isWindows()) {
-            return executeCommand("cmd.exe /c chdir");
-        } else {
-            return "";
-        }
-    }
-
-    public static String getAllRunningProcess() {
-        if (PlatformUtil.isWindows()) {
-            return executeCommand(System.getenv("windir") +"\\system32\\"+"tasklist.exe");
-        } else if (PlatformUtil.isLinux()) {
-            return executeCommand("sh -c ps -few");
-        } else {
-            return "";
-        }
-    }
-
-    public static String getFileContent(String command) {
-        String[] commandParts = command.split(" ");
-        if (PlatformUtil.isWindows()) {
-            return executeCommand("cmd /c more" + " " + commandParts[1]);
-        } else if (PlatformUtil.isLinux()){
-            return executeCommand("sh -c cat" + " " + commandParts[1]);
-        } else {
-            return "";
-        }
-    }
-
     public static String executeCommand(String command) {
+        String[] winCommandTemplate = {
+                "cmd",
+                "/c",
+                command
+        };
+
+        String[] linuxCommandTemplate = {
+                "/bin/sh",
+                "-c",
+                command
+        };
+
         StringBuffer output = new StringBuffer();
         try {
-            Process process = Runtime.getRuntime().exec(command);
+            log.info("Executing command: " + "'" +command + "'");
+            Process process = null;
+            if (PlatformUtil.isWindows()) {
+                process = Runtime.getRuntime().exec(winCommandTemplate);
+            } else if (PlatformUtil.isLinux()) {
+                process = Runtime.getRuntime().exec(linuxCommandTemplate);
+            }
+
             process.waitFor();
             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -91,10 +38,11 @@ public class BashCommandUtil {
                 output.append(line + "\n");
             }
             input.close();
+            log.info("Successfully executed command: " + "'" +command + "'");
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("Error executing command" + "'"+ command+ "' : " + e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error("Error executing command" + "'"+ command+ "' : " + e.getMessage());
         }
         return output.toString();
     }
