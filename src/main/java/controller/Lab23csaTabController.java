@@ -9,12 +9,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Window;
+import org.apache.log4j.Logger;
 
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Lab23csaTabController {
+    private static Logger log = Logger.getLogger(Lab23csaTabController.class);
     @FXML
     private TextField urlInputField;
 
@@ -57,6 +59,8 @@ public class Lab23csaTabController {
             return;
         } else {
             ExecutorService threadPool = Executors.newFixedThreadPool(10);
+            log.info("Created a pool of threads.");
+
             CSAClientWorker clientWorker = new CSAClientWorker(this.outputTextArea, url, Integer.parseInt(port), command);
             threadPool.execute(clientWorker);
         }
