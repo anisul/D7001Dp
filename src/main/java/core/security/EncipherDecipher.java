@@ -1,4 +1,4 @@
-package core;
+package core.security;
 
 // EncipherDecipher.java 
 // Displays a frame that allows users to specify
