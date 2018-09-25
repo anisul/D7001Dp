@@ -20,8 +20,8 @@
     </AnchorPane>
     <AnchorPane prefHeight="31.0" prefWidth="1086.0">
       <children>
-        <Button layoutX="0.0" layoutY="0.0" mnemonicParsing="false" text="Clear Log" />
-        <Button mnemonicParsing="false" text="Print Log" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+        <Button fx:id="clearLogButton" layoutX="0.0" layoutY="0.0" mnemonicParsing="false" onAction="#handleClearLogButtonAction" text="Clear Log" />
+        <Button fx:id="printLogButton" mnemonicParsing="false" onAction="#handlePrintLogButtonAction" text="Print Log" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
       </children>
       <VBox.margin>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
